@@ -7,6 +7,10 @@ on:
       - 'kubernetes/deployment.yaml'
   pull_request: 
     branches: [main]
+  
+env:
+  REGISTRY: ghcr.io
+  GITHUB_REPOSITORY: ashensenevirathne/devsecops-tic-tac-toe
 
 jobs:
   test:
@@ -99,7 +103,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.GITHUB_REPOSITORY }}
           tags: |
             type=sha,format=long
             type=ref,event=branch
@@ -117,7 +121,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
+          image-ref: ${{ env.REGISTRY }}/${{ env.GITHUB_REPOSITORY }}:sha-${{ github.sha }}
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
@@ -158,8 +162,6 @@ jobs:
       - name: Update Kubernetes deployment file
         env:
           IMAGE_TAG: sha-${{ github.sha }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          REGISTRY: ghcr.io
         run: |
           # Define the new image with tag
           NEW_IMAGE="${REGISTRY}/${GITHUB_REPOSITORY}:${IMAGE_TAG}"
