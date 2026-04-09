@@ -7,7 +7,9 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM nginx:alpine
+FROM nginx:1.27.5-alpine
+
+RUN apk upgrade --no-cache
 
 # Serve the compiled static files with nginx.
 COPY --from=build /app/dist /usr/share/nginx/html
