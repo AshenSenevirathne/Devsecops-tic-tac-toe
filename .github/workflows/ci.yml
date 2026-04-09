@@ -10,7 +10,7 @@ on:
   
 env:
   REGISTRY: ghcr.io
-  GITHUB_REPOSITORY: ashensenevirathne/devsecops-tic-tac-toe
+  GITHUB_REPO: ashensenevirathne/devsecops-tic-tac-toe
 
 jobs:
   test:
@@ -110,7 +110,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.GITHUB_REPOSITORY }}
+          images: ${{ env.REGISTRY }}/${{ env.GITHUB_REPO }}
           tags: |
             type=sha,format=long
             type=ref,event=branch
@@ -129,7 +129,7 @@ jobs:
         uses: aquasecurity/trivy-action@master
         continue-on-error: true
         with:
-          image-ref: ${{ env.REGISTRY }}/${{ env.GITHUB_REPOSITORY }}:sha-${{ github.sha }}
+          image-ref: ${{ env.REGISTRY }}/${{ env.GITHUB_REPO }}:sha-${{ github.sha }}
           format: 'table'
           exit-code: '1'
           ignore-unfixed: true
@@ -172,7 +172,7 @@ jobs:
           IMAGE_TAG: sha-${{ github.sha }}
         run: |
           # Define the new image with tag
-          NEW_IMAGE="${REGISTRY}/${GITHUB_REPOSITORY}:${IMAGE_TAG}"
+          NEW_IMAGE="${REGISTRY}/${GITHUB_REPO}:${IMAGE_TAG}"
           
           # Update the deployment file directly
           sed -i "s|image: ${REGISTRY}/.*|image: ${NEW_IMAGE}|g" kubernetes/deployment.yaml
